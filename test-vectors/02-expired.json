@@ -1,0 +1,46 @@
+{
+  "vector_id": "02-expired",
+  "description": "Posture Assertion with valid signature but exp in the past; MUST be rejected with TM_EXPIRED",
+  "status": "template",
+  "note": "Same signing key as 01-valid. Only exp differs. Any implementation accepting this mark at current_time_unix = 1745500300 has a bug.",
+  "inputs": {
+    "trust_mark_jws": "<PLACEHOLDER: ES256(payload) signed with test-es256-001>",
+    "trust_mark_payload": {
+      "ver": "0.1",
+      "iss": "https://test.ztnp.example",
+      "sub": "agent:test-corp/data-processor",
+      "iat": 1745400000,
+      "exp": 1745486400,
+      "jti": "tm_01HVXYZ_EXPIRED",
+      "scope": {
+        "kind": "agent",
+        "target": "https://api.test-corp.example/agents/data-processor",
+        "env": "prod"
+      },
+      "claims": {
+        "tier": 3,
+        "posture": {},
+        "flags": {
+          "critical_open": false,
+          "incident_open": false
+        }
+      },
+      "bind": {
+        "method": "nonce_hash",
+        "nonce": "<computed correctly>",
+        "ctx": "mcp",
+        "aud": "agent:requester-test"
+      }
+    },
+    "challenge_nonce": "Rw8MfS42K9aX2PzL_testNonce",
+    "ctx": "mcp",
+    "aud": "agent:requester-test",
+    "iks_file": "./keys/issuer-test.json",
+    "current_time_unix": 1745500300
+  },
+  "expected": {
+    "valid": false,
+    "decision": "deny",
+    "reason_codes": ["TM_EXPIRED"]
+  }
+}

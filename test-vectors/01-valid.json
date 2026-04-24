@@ -1,0 +1,58 @@
+{
+  "vector_id": "01-valid",
+  "description": "Well-formed Posture Assertion with nonce_hash binding; should verify successfully",
+  "status": "template",
+  "note": "The trust_mark_jws field below is a placeholder. The reference implementation in reference/ (see ../reference/) will produce a real ES256-signed JWS from the payload shown in trust_mark_payload.",
+  "inputs": {
+    "trust_mark_jws": "<PLACEHOLDER: ES256(payload) signed with test-es256-001>",
+    "trust_mark_payload": {
+      "ver": "0.1",
+      "iss": "https://test.ztnp.example",
+      "sub": "agent:test-corp/data-processor",
+      "iat": 1745500000,
+      "exp": 1745586400,
+      "jti": "tm_01HVXYZABC123DEF456GHI",
+      "scope": {
+        "kind": "agent",
+        "target": "https://api.test-corp.example/agents/data-processor",
+        "env": "prod"
+      },
+      "claims": {
+        "tier": 3,
+        "posture": {
+          "last_assessment": "2026-04-15T00:00:00Z"
+        },
+        "flags": {
+          "critical_open": false,
+          "incident_open": false,
+          "pii_access_allowed": true,
+          "secrets_access_allowed": false,
+          "code_exec_allowed": true
+        }
+      },
+      "bind": {
+        "method": "nonce_hash",
+        "nonce": "<base64url(SHA-256('Rw8MfS42K9aX2PzL_testNonce' || 'mcp' || 'agent:requester-test'))>",
+        "ctx": "mcp",
+        "aud": "agent:requester-test"
+      }
+    },
+    "challenge_nonce": "Rw8MfS42K9aX2PzL_testNonce",
+    "ctx": "mcp",
+    "aud": "agent:requester-test",
+    "iks_file": "./keys/issuer-test.json",
+    "current_time_unix": 1745500300,
+    "requester_policy": {
+      "require": {
+        "issuers": ["https://test.ztnp.example"],
+        "freshness_seconds": 86400,
+        "tier_min": 2
+      }
+    }
+  },
+  "expected": {
+    "valid": true,
+    "decision": "allow",
+    "reason_codes": []
+  }
+}

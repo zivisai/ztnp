@@ -1,0 +1,66 @@
+name: Profile Proposal
+description: Propose a domain-specific ZTNP profile (healthcare, finance, CI/CD, supply chain, etc.)
+title: "[Profile] "
+labels: ["profile-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ZTNP's base claims schema is minimal by design. Domain-specific claim
+        extensions belong in **profiles**. This template is for proposing a
+        new profile or a substantive extension to an existing one.
+
+  - type: input
+    id: domain
+    attributes:
+      label: Domain
+      description: What sector or use case is this profile for?
+      placeholder: "Healthcare (HIPAA-regulated AI agents)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is a dedicated profile needed? What can base ZTNP not express?
+    validations:
+      required: true
+
+  - type: textarea
+    id: claims
+    attributes:
+      label: Proposed additional claims
+      description: What fields would you add under `claims.posture` or elsewhere? Include types and semantics.
+      placeholder: |
+        claims.posture.hipaa:
+          last_audit: ISO8601 date
+          phi_access_scope: enum ["full", "de_identified", "none"]
+          baa_in_force: bool
+    validations:
+      required: true
+
+  - type: textarea
+    id: frameworks
+    attributes:
+      label: Related compliance frameworks
+      description: Which external standards does this profile align with?
+      placeholder: "HIPAA Security Rule, HITRUST CSF, NIST 800-66"
+    validations:
+      required: false
+
+  - type: textarea
+    id: policy
+    attributes:
+      label: Example policy using this profile
+      description: Show a sample Requester policy that would use your proposed claims
+    validations:
+      required: false
+
+  - type: textarea
+    id: constituency
+    attributes:
+      label: Constituency
+      description: Who else wants this? Are you willing to co-maintain the profile?
+    validations:
+      required: false

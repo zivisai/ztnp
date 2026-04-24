@@ -1,0 +1,42 @@
+{
+  "vector_id": "04-bad-binding",
+  "description": "Signature verifies but bind.nonce does not match the challenge (replay from different session); MUST be rejected with TM_BINDING_FAILED",
+  "status": "template",
+  "note": "The trust_mark is a legitimate mark that was signed for a different challenge_nonce or aud. Verification of the signature alone succeeds. The binding check (base64url(SHA-256(challenge_nonce || ctx || aud))) does not match bind.nonce, so the mark MUST be rejected.",
+  "inputs": {
+    "trust_mark_jws": "<PLACEHOLDER: ES256(payload) signed correctly, but bind.nonce was computed for a different challenge>",
+    "trust_mark_payload": {
+      "ver": "0.1",
+      "iss": "https://test.ztnp.example",
+      "sub": "agent:test-corp/data-processor",
+      "iat": 1745500000,
+      "exp": 1745586400,
+      "jti": "tm_01HVXYZ_WRONG_BINDING",
+      "scope": {
+        "kind": "agent",
+        "target": "https://api.test-corp.example/agents/data-processor"
+      },
+      "claims": {
+        "tier": 3,
+        "posture": {},
+        "flags": { "critical_open": false, "incident_open": false }
+      },
+      "bind": {
+        "method": "nonce_hash",
+        "nonce": "<SHA-256 computed for DIFFERENT challenge 'OldSessionNonce'>",
+        "ctx": "mcp",
+        "aud": "agent:requester-test"
+      }
+    },
+    "challenge_nonce": "Rw8MfS42K9aX2PzL_testNonce",
+    "ctx": "mcp",
+    "aud": "agent:requester-test",
+    "iks_file": "./keys/issuer-test.json",
+    "current_time_unix": 1745500300
+  },
+  "expected": {
+    "valid": false,
+    "decision": "deny",
+    "reason_codes": ["TM_BINDING_FAILED"]
+  }
+}

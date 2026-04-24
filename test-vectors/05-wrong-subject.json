@@ -1,0 +1,44 @@
+{
+  "vector_id": "05-wrong-subject",
+  "description": "Signature, expiration, and binding all verify correctly, but sub/scope.target identify a different service than the one the Requester intended to call (substitution attack); MUST be rejected by Requester subject-binding check (§15.4)",
+  "status": "template",
+  "note": "This vector specifically tests Section 15.4 (subject binding). The Posture Assertion is cryptographically valid for service A. The Requester is actually calling service B. A conforming verifier with subject binding enabled MUST NOT accept this mark.",
+  "inputs": {
+    "trust_mark_jws": "<PLACEHOLDER: valid JWS for agent:other-corp/analytics>",
+    "trust_mark_payload": {
+      "ver": "0.1",
+      "iss": "https://test.ztnp.example",
+      "sub": "agent:other-corp/analytics",
+      "iat": 1745500000,
+      "exp": 1745586400,
+      "jti": "tm_01HVXYZ_WRONG_SUBJECT",
+      "scope": {
+        "kind": "agent",
+        "target": "https://api.other-corp.example/agents/analytics"
+      },
+      "claims": {
+        "tier": 4,
+        "posture": {},
+        "flags": { "critical_open": false, "incident_open": false }
+      },
+      "bind": {
+        "method": "nonce_hash",
+        "nonce": "<computed correctly for this session>",
+        "ctx": "mcp",
+        "aud": "agent:requester-test"
+      }
+    },
+    "challenge_nonce": "Rw8MfS42K9aX2PzL_testNonce",
+    "ctx": "mcp",
+    "aud": "agent:requester-test",
+    "intended_target": "https://api.test-corp.example/agents/data-processor",
+    "iks_file": "./keys/issuer-test.json",
+    "current_time_unix": 1745500300
+  },
+  "expected": {
+    "valid": false,
+    "decision": "deny",
+    "reason_codes": ["SUBJECT_MISMATCH"],
+    "note": "SUBJECT_MISMATCH is a proposed reason code for the Section 15.4 check. If the implementation returns a generic policy deny, that is acceptable for v0.1 conformance but less informative. We recommend adding SUBJECT_MISMATCH to the reason code registry (Section 16.2)."
+  }
+}

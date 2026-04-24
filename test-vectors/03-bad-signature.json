@@ -1,0 +1,42 @@
+{
+  "vector_id": "03-bad-signature",
+  "description": "Valid payload but signature was produced over a different payload (classic bit-flip attack); MUST be rejected with TM_INVALID_SIG",
+  "status": "template",
+  "note": "To produce this vector: sign 01-valid's payload, then modify claims.tier from 3 to 4 in the JWS payload without re-signing. The signature no longer covers the modified payload.",
+  "inputs": {
+    "trust_mark_jws": "<PLACEHOLDER: JWS with payload modified post-signing>",
+    "trust_mark_payload_as_presented": {
+      "ver": "0.1",
+      "iss": "https://test.ztnp.example",
+      "sub": "agent:test-corp/data-processor",
+      "iat": 1745500000,
+      "exp": 1745586400,
+      "jti": "tm_01HVXYZ_TAMPERED",
+      "scope": {
+        "kind": "agent",
+        "target": "https://api.test-corp.example/agents/data-processor"
+      },
+      "claims": {
+        "tier": 4,
+        "posture": {},
+        "flags": { "critical_open": false, "incident_open": false }
+      },
+      "bind": {
+        "method": "nonce_hash",
+        "nonce": "<original nonce hash>",
+        "ctx": "mcp",
+        "aud": "agent:requester-test"
+      }
+    },
+    "challenge_nonce": "Rw8MfS42K9aX2PzL_testNonce",
+    "ctx": "mcp",
+    "aud": "agent:requester-test",
+    "iks_file": "./keys/issuer-test.json",
+    "current_time_unix": 1745500300
+  },
+  "expected": {
+    "valid": false,
+    "decision": "deny",
+    "reason_codes": ["TM_INVALID_SIG"]
+  }
+}

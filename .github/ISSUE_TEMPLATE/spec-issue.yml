@@ -1,0 +1,63 @@
+name: Spec Issue (ambiguity, error, or clarification)
+description: Report a bug, ambiguity, or requested clarification in the ZTNP specification
+title: "[Spec] "
+labels: ["spec"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reviewing the ZTNP draft. Please fill out the fields below
+        so we can address the issue precisely.
+
+        If this concerns a **specification-level security vulnerability** — a
+        flaw that would compromise any conforming implementation — please use
+        the process in [SECURITY.md](../SECURITY.md) instead of this template.
+
+  - type: input
+    id: section
+    attributes:
+      label: Section / line reference
+      description: Which section or line of the draft? e.g. "§8.4 first paragraph"
+      placeholder: "§8.4, nonce_hash paragraph"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of issue
+      options:
+        - Ambiguity (two implementers could interpret differently)
+        - Error (spec says something that is incorrect or contradictory)
+        - Missing requirement (spec is silent where it should be normative)
+        - Over-specified (spec is too strict, should be SHOULD not MUST)
+        - Editorial (typo, grammar, formatting)
+        - Clarification request (spec is technically correct but unclear)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is the issue?
+      placeholder: "Section 8.4 says 'base64url(SHA-256(challenge_nonce || ctx || aud))' but does not specify the canonical UTF-8 encoding of the || concatenation, leading to potential interop issues..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who is affected and how?
+      placeholder: "Two implementations could produce different bind.nonce values for the same inputs, causing valid Posture Assertions to fail verification."
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested resolution
+      description: Optional. What do you think the spec should say instead?
+    validations:
+      required: false

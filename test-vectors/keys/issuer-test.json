@@ -1,0 +1,24 @@
+{
+  "issuer": "https://test.ztnp.example",
+  "note": "TEST-ONLY key set. MUST NOT be trusted by production implementations. The private key is published in this repository for reproducibility of test vectors only.",
+  "keys": [
+    {
+      "kid": "test-es256-001",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "use": "sig",
+      "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+      "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0",
+      "valid_from": 1704067200,
+      "valid_until": 1798761600
+    }
+  ],
+  "private_keys_for_test_only": [
+    {
+      "kid": "test-es256-001",
+      "d": "jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI",
+      "warning": "TEST PRIVATE KEY. DO NOT USE FOR PRODUCTION. Published here so that test vectors can be re-signed and verified independently."
+    }
+  ]
+}

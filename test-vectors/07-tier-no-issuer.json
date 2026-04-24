@@ -1,0 +1,50 @@
+{
+  "vector_id": "07-tier-no-issuer",
+  "description": "Policy engine test: a requester policy specifies tier_min but no issuers constraint. Per Section 8.3 and Section 11 (tier semantics are issuer-anchored), a conforming policy engine SHOULD reject this policy as incomplete.",
+  "status": "template",
+  "note": "This vector does not test Posture Assertion verification directly. It tests the policy evaluation layer. The Posture Assertion is well-formed and would pass all cryptographic checks. The failure is that the policy itself violates the requirement in Sections 8.3/11 that tier_min be paired with an issuers constraint.",
+  "inputs": {
+    "trust_mark_jws": "<PLACEHOLDER: valid JWS, same as 01-valid>",
+    "trust_mark_payload": {
+      "ver": "0.1",
+      "iss": "https://test.ztnp.example",
+      "sub": "agent:test-corp/data-processor",
+      "iat": 1745500000,
+      "exp": 1745586400,
+      "jti": "tm_01HVXYZ_TIER_TEST",
+      "scope": {
+        "kind": "agent",
+        "target": "https://api.test-corp.example/agents/data-processor"
+      },
+      "claims": {
+        "tier": 3,
+        "posture": {},
+        "flags": { "critical_open": false, "incident_open": false }
+      },
+      "bind": {
+        "method": "nonce_hash",
+        "nonce": "<computed correctly>",
+        "ctx": "mcp",
+        "aud": "agent:requester-test"
+      }
+    },
+    "challenge_nonce": "Rw8MfS42K9aX2PzL_testNonce",
+    "ctx": "mcp",
+    "aud": "agent:requester-test",
+    "iks_file": "./keys/issuer-test.json",
+    "current_time_unix": 1745500300,
+    "requester_policy_INVALID": {
+      "require": {
+        "tier_min": 2,
+        "freshness_seconds": 86400
+      },
+      "note": "No issuers constraint. Per Sections 8.3/11, this policy is incomplete."
+    }
+  },
+  "expected": {
+    "valid": true,
+    "decision": "deny",
+    "reason_codes": ["POLICY_INCOMPLETE_TIER_NO_ISSUER"],
+    "note": "The Posture Assertion is valid; the policy is malformed. A conforming policy engine SHOULD refuse to evaluate this policy. POLICY_INCOMPLETE_TIER_NO_ISSUER is a proposed reason code for this case."
+  }
+}

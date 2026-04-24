@@ -1,0 +1,84 @@
+name: Implementation Feedback
+description: Share feedback from implementing ZTNP (a Requester, Prover, or both)
+title: "[Impl] "
+labels: ["implementation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Implementation feedback is the most valuable form of spec feedback.
+        Thanks for building against ZTNP.
+
+  - type: input
+    id: implementation
+    attributes:
+      label: Implementation name / repo
+      description: Link to your implementation, if public
+      placeholder: "https://github.com/example/ztnp-go"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: role
+    attributes:
+      label: What did you implement?
+      options:
+        - Requester (Verifier)
+        - Prover (Attester)
+        - Both
+        - Policy engine only
+        - Middleware / gateway
+    validations:
+      required: true
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language / runtime
+      options:
+        - TypeScript / Node
+        - Python
+        - Go
+        - Rust
+        - Java / JVM
+        - C / C++
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: transport
+    attributes:
+      label: Transport binding
+      options:
+        - HTTP
+        - MCP
+        - WebSocket
+        - gRPC
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: hard
+    attributes:
+      label: What was hard?
+      description: Where did the spec force you into a judgment call, or leave you guessing?
+    validations:
+      required: true
+
+  - type: textarea
+    id: surprising
+    attributes:
+      label: Anything surprising?
+      description: Behavior that was unexpected, overhead that was higher/lower than expected, edge cases you hit
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggestions
+    attributes:
+      label: Suggestions for the spec
+      description: What would have made your life easier?
+    validations:
+      required: false

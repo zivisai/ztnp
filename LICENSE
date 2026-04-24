@@ -1,0 +1,49 @@
+# Licensing
+
+This repository contains two categories of content licensed separately.
+
+## Specification Text
+
+The specification text — including `draft-zivis-ztnp-00.md`, `README.md`,
+and any accompanying prose documentation describing the protocol — is licensed
+under the **Creative Commons Attribution 4.0 International License (CC-BY-4.0)**.
+
+See [LICENSE-SPEC](./LICENSE-SPEC) for the full text.
+
+### IETF Contribution
+
+Portions of the specification intended for IETF submission are additionally
+offered under the IETF Trust Legal Provisions (TLP) applicable to IETF
+contributions. Contributors agree that IETF-submitted material may be used
+under BCP 78/79 and the associated IETF Trust license terms as in effect on
+the date of contribution.
+
+## Code
+
+Reference implementations, code samples, test vectors, and any code in
+directories such as `reference/`, `test-vectors/`, or `examples/` are licensed
+under the **Apache License, Version 2.0**.
+
+See [LICENSE-CODE](./LICENSE-CODE) for the full text.
+
+## Summary
+
+| Content | License |
+|---------|---------|
+| Specification text (`*.md` describing the protocol) | CC-BY-4.0 (+ IETF TLP for submitted portions) |
+| Reference code, test vectors, examples | Apache-2.0 |
+
+## Trademarks
+
+"ZIVIS" and related product names, logos, and marks are trademarks of ZIVIS
+and are not licensed under this file. Implementations and derivative works
+MUST NOT imply endorsement by ZIVIS or suggest that an implementation is a
+"ZIVIS-issued" Posture Assertion unless the assertion was actually issued by ZIVIS.
+
+## Profiles
+
+The ZTNP specification defines a Profile extension mechanism (Appendix D
+of the draft). Individual profiles — whether published by ZIVIS, other
+vendors, or industry consortia — are separately-licensed works and are
+out of scope for this repository. The ZTNP negotiation protocol defined
+by this specification is open and free to implement.

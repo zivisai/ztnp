@@ -1,0 +1,47 @@
+{
+  "vector_id": "06-unknown-kid",
+  "description": "Posture Assertion signed by a key whose kid is not present in the Issuer Key Set; MUST be rejected with TM_INVALID_SIG or TM_ISSUER_UNKNOWN",
+  "status": "template",
+  "note": "This vector tests the key-discovery enforcement required by Section 9.2. The signature may be mathematically valid under some unrelated key, but the kid in the JWS header references a key not in the issuer's published IKS. A conforming verifier MUST fetch the IKS, fail to resolve the kid, and reject.",
+  "inputs": {
+    "trust_mark_jws": "<PLACEHOLDER: JWS with kid='test-es256-rogue' not present in IKS>",
+    "trust_mark_header": {
+      "alg": "ES256",
+      "kid": "test-es256-rogue",
+      "typ": "JWS"
+    },
+    "trust_mark_payload": {
+      "ver": "0.1",
+      "iss": "https://test.ztnp.example",
+      "sub": "agent:test-corp/data-processor",
+      "iat": 1745500000,
+      "exp": 1745586400,
+      "jti": "tm_01HVXYZ_ROGUE_KEY",
+      "scope": {
+        "kind": "agent",
+        "target": "https://api.test-corp.example/agents/data-processor"
+      },
+      "claims": {
+        "tier": 3,
+        "posture": {},
+        "flags": { "critical_open": false, "incident_open": false }
+      },
+      "bind": {
+        "method": "nonce_hash",
+        "nonce": "<computed correctly>",
+        "ctx": "mcp",
+        "aud": "agent:requester-test"
+      }
+    },
+    "challenge_nonce": "Rw8MfS42K9aX2PzL_testNonce",
+    "ctx": "mcp",
+    "aud": "agent:requester-test",
+    "iks_file": "./keys/issuer-test.json",
+    "current_time_unix": 1745500300
+  },
+  "expected": {
+    "valid": false,
+    "decision": "deny",
+    "reason_codes": ["TM_INVALID_SIG"]
+  }
+}

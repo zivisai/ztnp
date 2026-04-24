@@ -1,0 +1,12 @@
+.DS_Store
+*.swp
+*.swo
+
+# Generated artifacts — canonical source is the Markdown draft
+*.pdf
+*.html
+
+# Reference implementation
+reference/**/node_modules/
+reference/**/dist/
+reference/**/*.log
