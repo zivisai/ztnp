@@ -2,7 +2,7 @@
 
 **draft-zivis-ztnp-00** · Internet-Draft · April 2026
 
-ZTNP is a lightweight, cryptographically verifiable protocol for agent-to-agent and agent-to-tool trust negotiation. Before two AI agents—or an agent and an MCP tool server—exchange data or invoke capabilities, ZTNP lets each side present a **Posture Assertion**: a signed token containing machine-readable security posture claims. The receiving party verifies the mark, evaluates it against local policy, and either grants a scoped **Permit** or returns a machine-readable **DENY**.
+ZTNP is a cryptographically verifiable protocol for agent-to-agent and agent-to-tool trust negotiation. It covers the full lifecycle of trust in agentic AI systems: **registration** (how a new agent obtains its first Posture Assertion from an Issuer), **negotiation** (how two parties exchange and bind Posture Assertions at session establishment), and **validation** (how a receiving party verifies signatures, evaluates policy, and issues a scoped Permit or a machine-readable DENY).
 
 Think of it as the posture layer that identity protocols were never designed to provide. OAuth tells you *who* an agent is. ZTNP tells you *how trustworthy it is right now*.
 
@@ -20,7 +20,43 @@ ZTNP fills this gap. It is intentionally complementary to—not a replacement fo
 
 ---
 
-## How It Works (30-Second Version)
+## How It Works
+
+ZTNP has three phases: **Registration** (once per agent), **Negotiation** (once per session), and **Validation** (every request within a session).
+
+### Phase 1: Registration — one-time, per agent
+
+Before an agent can participate in ZTNP flows, it needs a Posture Assertion from an Issuer. This is what §17 Enrollment defines.
+
+```
+Enrollee (new agent)        Issuer              Endorser (optional)
+        |                       |                       |
+        |-- ENROLL_INIT ------->|                       |
+        |<- ENROLL_CHALLENGE ---|                       |
+        |                                               |
+        |  [if Assessed Enrollment:]                    |
+        |-- request endorsement ----------------------->|
+        |<----------------- endorsement JWS ------------|
+        |                       |                       |
+        |-- ENROLL_REQUEST ---->|                       |
+        |   (metadata,          |                       |
+        |    subject_key,       |                       |
+        |    endorsement?,      |                       |
+        |    evidence?)         |                       |
+        |                  [assess]                     |
+        |<- ENROLL_RESULT ------|                       |
+        |   (sub, PA, iks_url)  |                       |
+```
+
+**Two modes:**
+- **Self-Enrollment** — no endorsement; ceiling at tier 1 (suitable for internal, non-critical use)
+- **Assessed Enrollment** — endorsed by an orchestrator, CI/CD pipeline, or human (required for tier ≥ 2)
+
+The Endorser is the root of any future Delegation Chain (§16.1) — registration and delegation are architecturally linked.
+
+### Phase 2: Negotiation — once per session
+
+Before two parties exchange data, they negotiate trust based on their Posture Assertions.
 
 ```
 Agent A (Requester)              Agent B / Tool Server (Prover)
@@ -36,17 +72,33 @@ Agent A (Requester)              Agent B / Tool Server (Prover)
         |                                   |
         |--- 4. PERMIT (scoped) ----------->|  ← allow_with_constraints
         |   or DENY (machine-readable) ---->|  ← deny
-        |                                   |
-        |--- 5. tool calls with Permit ---->|
 ```
 
-1. **Discovery** — Requester asks what ZTNP modes and issuers Prover supports.
+1. **Discovery** — Requester asks what modes and issuers the Prover supports.
 2. **Challenge** — Requester sends a random nonce to prevent replay.
-3. **Proof** — Prover returns a signed Posture Assertion bound to the nonce.
+3. **Proof** — Prover returns a Posture Assertion bound to the nonce.
 4. **Decision** — Requester verifies the signature, evaluates local policy, issues a Permit or Deny.
-5. **Authorized calls** — Subsequent requests carry the Permit.
 
-The protocol adds **one round-trip** to session establishment and requires no central coordination at runtime.
+### Phase 3: Validation — every request within the session
+
+Each subsequent tool call carries the Permit; the Prover (or an enforcement point in front of it) validates it on every request.
+
+```
+        |--- tool call + Permit ----------->|
+        |                        [validate Permit: sig, exp, scope]
+        |                        [if PoP-bound: validate proof (§12.2)]
+        |                        [if channel-bound: validate TLS exporter (§12.3)]
+        |                        [if intent-scoped: validate operation in scope (§16.2)]
+        |<-- result or 403 ----------------|
+```
+
+For agentic AI deployments, the Permit is typically bound to:
+- An ephemeral key the agent proves possession of on each call (PoP, §12.2)
+- The specific TLS session the negotiation happened on (channel binding, §12.3)
+- The original authorized intent from the user/orchestrator (intent scope, §16.2)
+- The delegation chain that produced the call (§16.1)
+
+Validation is local — no central authority is dial-homed at runtime.
 
 ---
 

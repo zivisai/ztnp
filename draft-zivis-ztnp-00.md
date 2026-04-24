@@ -11,7 +11,7 @@ Expires: October 2026
 
 ## Abstract
 
-The Zero-Trust Negotiation Protocol (ZTNP) is a lightweight, cryptographically verifiable protocol that enables agent-to-agent and agent-to-tool trust negotiation in agentic AI systems. ZTNP allows a party to require another party to present a signed Posture Assertion containing machine-readable security posture claims, and to bind that mark to a session challenge to prevent replay attacks. ZTNP defines message flows, a canonical claims schema, verification requirements, a policy evaluation model, and normative transport bindings for HTTP and MCP (Model Context Protocol). ZTNP composes with existing IETF work on attestation (RATS), signed statements (SCITT), and scoped authorization (OAuth/GNAP) without claiming to be a profile of any one of them; see Section 5. This draft is an individual submission; the appropriate IETF venue for progressing this work is an open question the authors ask the community to help answer.
+The Zero-Trust Negotiation Protocol (ZTNP) is a cryptographically verifiable protocol that enables agent-to-agent and agent-to-tool trust negotiation in agentic AI systems. ZTNP covers the full trust lifecycle: enrollment (how a Prover obtains its first Posture Assertion from an Issuer), negotiation (how parties exchange and bind Posture Assertions at session establishment), and validation (how a receiving party verifies, evaluates policy, and issues scoped Permits). The specification defines message flows, a canonical claims schema, verification requirements, a policy evaluation model, optional delegation-chain attestation and intent-scoped Permits for multi-agent orchestration, and normative transport bindings for HTTP and MCP (Model Context Protocol). ZTNP composes with existing IETF work on attestation (RATS), signed statements (SCITT), scoped authorization (OAuth/GNAP), dynamic registration (RFC 7591/7592), and proof-of-possession (DPoP) without claiming to be a profile of any one of them; see Section 5. This draft is an individual submission; the appropriate IETF venue for progressing this work is an open question the authors ask the community to help answer.
 
 ## Status of This Memo
 
@@ -123,11 +123,13 @@ Similar gaps exist in multi-agent orchestration frameworks, AI pipeline systems,
 
 ZTNP is designed to be:
 
-- **Lightweight** — adds one round-trip to session establishment; does not require central coordination
+- **Layered** — a small, mandatory core (enrollment, negotiation, validation) with clearly-optional extensions (delegation chains, intent-scoped Permits, PoP, channel binding, RFC 7591 compatibility) that deployments add only as their threat model requires
 - **Transport-agnostic** — the same protocol semantics apply over HTTP, WebSocket, gRPC, or MCP
-- **Cryptographically verifiable** — all trust claims are signed; verification is deterministic and local
-- **Policy-local** — requesters apply their own policies; there is no mandatory central policy authority
-- **Incrementally adoptable** — systems that cannot yet provide a Posture Assertion can be treated gracefully via opportunistic binding (Section 6.4)
+- **Cryptographically verifiable** — all trust claims are signed; verification is deterministic and local at runtime (no dial-home to a central authority during negotiation)
+- **Policy-local** — Requesters apply their own policies; there is no mandatory central policy authority
+- **Incrementally adoptable** — systems that cannot yet provide a Posture Assertion can be treated gracefully via opportunistic binding (Section 6.4); deployments can start with negotiation-only and adopt §16/§17 as needed
+
+Negotiation adds one round-trip to session establishment. Enrollment happens once per Prover, out-of-band from the session path. Validation is per-request but local. The protocol is not "lightweight" in total surface area — the full specification addresses a broad threat model — but its runtime cost on a per-session basis is bounded and predictable.
 
 ---
 
